@@ -140,81 +140,74 @@ private extension HomeView {
 
 // MARK: - Previews
 
+private final class FakeViewModel: ViewModel {
+    @Published var state = HomeViewModel.State()
+    func send(event: HomeViewModel.Event) {}
+}
+
 #Preview("Initial State") {
-    HomeView(viewModel: HomeViewModel(session: AppUrlSession.shared))
+    HomeView(viewModel: FakeViewModel())
         .preferredColorScheme(.light)
 }
-//
-//#Preview("Joke Loaded") {
-//    let viewState = HomeViewState()
-//    return HomeView(viewState: viewState)
-//        .task {
-//            let result = GetRandomJokeResult.success(randomJoke)
-//            viewState.reduce(with: .getRandomJokeResult(result))
-//        }
-//        .environmentObject(NavigationState())
-//        .preferredColorScheme(.light)
-//}
-//
-//#Preview("Categories Loaded") {
-//    let viewState = HomeViewState()
-//    return HomeView(viewState: viewState)
-//        .task {
-//            let result = GetCategoriesResult.success(categoryNames)
-//            viewState.reduce(with: .getCategoriesResult(result))
-//        }
-//        .environmentObject(NavigationState())
-//        .preferredColorScheme(.light)
-//}
-//
-//#Preview("Ready") {
-//    let viewState = HomeViewState()
-//    return HomeView(viewState: viewState)
-//        .task {
-//            let jokeResult = GetRandomJokeResult.success(randomJoke)
-//            let categoriesResult = GetCategoriesResult.success(categoryNames)
-//            viewState.reduce(with: .getRandomJokeResult(jokeResult))
-//            viewState.reduce(with: .getCategoriesResult(categoriesResult))
-//        }
-//        .environmentObject(NavigationState())
-//        .preferredColorScheme(.light)
-//}
-//
-//#Preview("Errors") {
-//    let viewState = HomeViewState()
-//    return HomeView(viewState: viewState)
-//        .task {
-//            let jokeError = AppUrlSession.RequestError.serverResponse(code: 404)
-//            let categoriesError = AppUrlSession.RequestError.serverResponse(code: 404)
-//            let jokeResult = GetRandomJokeResult.failure(jokeError)
-//            let categoriesResult = GetCategoriesResult.failure(categoriesError)
-//            viewState.reduce(with: .getRandomJokeResult(jokeResult))
-//            viewState.reduce(with: .getCategoriesResult(categoriesResult))
-//        }
-//        .environmentObject(NavigationState())
-//        .preferredColorScheme(.light)
-//}
-//
-//#Preview("Dark") {
-//    return HomeView(viewState: HomeViewState())
-//        .environmentObject(NavigationState())
-//        .preferredColorScheme(.dark)
-//}
-//
-//#Preview("Dark Errors") {
-//    let viewState = HomeViewState()
-//    return HomeView(viewState: viewState)
-//        .task {
-//            let jokeError = AppUrlSession.RequestError.serverResponse(code: 404)
-//            let categoriesError = AppUrlSession.RequestError.serverResponse(code: 404)
-//            let jokeResult = GetRandomJokeResult.failure(jokeError)
-//            let categoriesResult = GetCategoriesResult.failure(categoriesError)
-//            viewState.reduce(with: .getRandomJokeResult(jokeResult))
-//            viewState.reduce(with: .getCategoriesResult(categoriesResult))
-//        }
-//        .environmentObject(NavigationState())
-//        .preferredColorScheme(.dark)
-//}
+
+#Preview("Joke Loaded") {
+    let viewModel = FakeViewModel()
+    viewModel.state.reduce(with: .getRandomJokeResult(.success(randomJoke)))
+
+    return HomeView(viewModel: viewModel)
+        .preferredColorScheme(.light)
+}
+
+#Preview("Categories Loaded") {
+    let viewModel = FakeViewModel()
+    let result = GetCategoriesResult.success(categoryNames)
+    viewModel.state.reduce(with: .getCategoriesResult(result))
+
+    return HomeView(viewModel: viewModel)
+        .preferredColorScheme(.light)
+}
+
+#Preview("Ready") {
+    let viewModel = FakeViewModel()
+    let jokeResult = GetRandomJokeResult.success(randomJoke)
+    let categoriesResult = GetCategoriesResult.success(categoryNames)
+    viewModel.state.reduce(with: .getRandomJokeResult(jokeResult))
+    viewModel.state.reduce(with: .getCategoriesResult(categoriesResult))
+
+    return HomeView(viewModel: viewModel)
+        .preferredColorScheme(.light)
+}
+
+#Preview("Errors") {
+    let viewModel = FakeViewModel()
+    let jokeError = AppUrlSession.RequestError.serverResponse(code: 404)
+    let categoriesError = AppUrlSession.RequestError.serverResponse(code: 404)
+    let jokeResult = GetRandomJokeResult.failure(jokeError)
+    let categoriesResult = GetCategoriesResult.failure(categoriesError)
+    viewModel.state.reduce(with: .getRandomJokeResult(jokeResult))
+    viewModel.state.reduce(with: .getCategoriesResult(categoriesResult))
+
+    return HomeView(viewModel: viewModel)
+        .preferredColorScheme(.light)
+}
+
+#Preview("Dark") {
+    HomeView(viewModel: FakeViewModel())
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Dark Errors") {
+    let viewModel = FakeViewModel()
+    let jokeError = AppUrlSession.RequestError.serverResponse(code: 404)
+    let categoriesError = AppUrlSession.RequestError.serverResponse(code: 404)
+    let jokeResult = GetRandomJokeResult.failure(jokeError)
+    let categoriesResult = GetCategoriesResult.failure(categoriesError)
+    viewModel.state.reduce(with: .getRandomJokeResult(jokeResult))
+    viewModel.state.reduce(with: .getCategoriesResult(categoriesResult))
+
+    return HomeView(viewModel: viewModel)
+        .preferredColorScheme(.dark)
+}
 
 fileprivate let randomJoke = "Chuck Norris can kill you with a headshot using a shotgun from across the map on call of duty."
 fileprivate let categoryNames = ["animal","career","celebrity","dev","explicit","fashion","food","history","money","movie","music","political","religion","science","sport","travel"]

@@ -12,7 +12,7 @@ struct AppText: ViewModifier {
     let font: Font
     let color: Color
 
-    init(font: Font, color: Color = .black) {
+    init(font: Font, color: Color = .appText) {
         self.font = font
         self.color = color
     }

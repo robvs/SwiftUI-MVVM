@@ -17,14 +17,3 @@ protocol ViewModel<State, Event>: ObservableObject {
 
     func send(event: Event)
 }
-//
-//class ViewModel<State, Event>: ViewModeling {
-//    @Published var state: State
-//
-//    init(state: State) {
-//        self.state = state
-//    }
-//
-//    func send(event: Event) {
-//    }
-//}

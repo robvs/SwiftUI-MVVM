@@ -11,30 +11,17 @@ import OSLog
 final class HomeViewModel: ViewModel {
     @Published var state: State
 
-    // MARK: Private Properties
-
     private let session: AppUrlSessionHandling
-
-    // MARK: Object lifecycle
-
+    
+    /// Create a new instance.
+    /// - Parameters:
+    ///   - state: The initial view state values.
+    ///   - session: Injected URL session handler.
     init(state: State = State(), session: AppUrlSessionHandling) {
         self.state = state
         self.session = session
 
         fetchData()
-    }
-
-    // MARK: State
-
-    /// Encapsulation of values that drive the dynamic elements of the associated view.
-    ///
-    /// The default values indicate the intended initial state.
-    struct State: Equatable {
-        var randomJoke: String?
-        var randomJokeError: String?
-        var categories: [String]?
-        var categoriesError: String?
-        var refreshButtonDisabled: Bool = true
     }
 
     // MARK: Events
@@ -47,9 +34,9 @@ final class HomeViewModel: ViewModel {
     func send(event: Event) {
         switch event {
         case .categorySelected(let name):
-            break
+            Logger.view.debug("Category selected: \(name)")
         case .refreshButtonPressed:
-            break
+            fetchData()
         }
     }
 }
@@ -58,40 +45,103 @@ final class HomeViewModel: ViewModel {
 
 private extension HomeViewModel {
     func fetchData() {
-        state.refreshButtonDisabled = true
-        state.randomJoke = nil
-        state.randomJokeError = nil
-        state.categoriesError = nil
+        state.reduce(with: .loadingRandomJoke)
 
         // run both random joke and categories requests in parallel.
 
         Task {
             Logger.api.trace("isMainThread: \(Thread.isMainThread)")
 
+            let result: GetRandomJokeResult
             do {
                 let joke: ChuckNorrisJoke = try await session.get(from: ChuckNorrisIoRequest.getRandomJoke().url)
-                state.randomJoke = joke.value
+                result = .success(joke.value)
             } catch let requestError as AppUrlSession.RequestError {
-                state.randomJokeError = requestError.localizedDescription
+                result = .failure(requestError)
             } catch {
-                state.randomJokeError = AppUrlSession.RequestError.unexpected(error.localizedDescription).localizedDescription
+                result = .failure(AppUrlSession.RequestError.unexpected(error.localizedDescription))
             }
 
-            state.refreshButtonDisabled = false
+            state.reduce(with: .getRandomJokeResult(result))
         }
 
         Task {
             Logger.api.trace("isMainThread: \(Thread.isMainThread)")
 
+            let result: GetCategoriesResult
             do {
-                state.categories = try await session.get(from: ChuckNorrisIoRequest.getCategories.url)
+                let categories: [String] = try await session.get(from: ChuckNorrisIoRequest.getCategories.url)
+                result = .success(categories)
             } catch let requestError as AppUrlSession.RequestError {
-                state.categoriesError = requestError.localizedDescription
+                result = .failure(requestError)
             } catch {
-                state.categoriesError = AppUrlSession.RequestError.unexpected(error.localizedDescription).localizedDescription
+                result = .failure(AppUrlSession.RequestError.unexpected(error.localizedDescription))
             }
 
-            state.refreshButtonDisabled = false
+            state.reduce(with: .getCategoriesResult(result))
+        }
+    }
+}
+
+// MARK: View State
+
+extension HomeViewModel {
+    /// Encapsulation of values that drive the dynamic elements of the associated view.
+    ///
+    /// The default values indicate the intended initial state.
+    struct State: Equatable {
+        private(set) var randomJoke: String?
+        private(set) var randomJokeError: String?
+        private(set) var categories: [String]?
+        private(set) var categoriesError: String?
+        private(set) var refreshButtonDisabled: Bool = true
+
+        /// Items that designate how the view state should change, usually
+        /// the result of an `Event`.
+        enum Effect: Equatable {
+            /// Indicates that the random joke is being fetched.
+            case loadingRandomJoke
+
+            /// Indicates that retrieval of the random joke is complete.
+            case getCategoriesResult(GetCategoriesResult)
+
+            /// Indicates that retrieval of the random joke is complete.
+            case getRandomJokeResult(GetRandomJokeResult)
+        }
+
+        // MARK: Reducer
+        
+        /// Handle changes from the current state to the next state.
+        /// - Parameter effect: Directive of how the state should change.
+        mutating func reduce(with effect: Effect) {
+            switch effect {
+            case .loadingRandomJoke:
+                refreshButtonDisabled = true
+                randomJoke = nil
+                randomJokeError = nil
+
+            case .getRandomJokeResult(let result):
+                refreshButtonDisabled = false
+
+                switch result {
+                case .success(let joke):
+                    randomJoke = joke
+                    randomJokeError = nil
+                case .failure(let error):
+                    randomJoke = ""
+                    randomJokeError = error.localizedDescription
+                }
+
+            case .getCategoriesResult(let result):
+                switch result {
+                case .success(let categories):
+                    self.categories = categories
+                    categoriesError = nil
+                case .failure(let error):
+                    categories = []
+                    categoriesError = error.localizedDescription
+                }
+            }
         }
     }
 }

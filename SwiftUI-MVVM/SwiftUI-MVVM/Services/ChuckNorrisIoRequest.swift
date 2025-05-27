@@ -9,9 +9,9 @@ import Foundation
 
 // MARK: Request result types
 
-//typealias GetRandomJokeResult = Result<String, AppUrlSession.RequestError>
-//typealias GetRandomJokesResult = Result<[String], AppUrlSession.RequestError>
-//typealias GetCategoriesResult = Result<[String], AppUrlSession.RequestError>
+typealias GetRandomJokeResult = Result<String, AppUrlSession.RequestError>
+typealias GetRandomJokesResult = Result<[String], AppUrlSession.RequestError>
+typealias GetCategoriesResult = Result<[String], AppUrlSession.RequestError>
 
 /// Defines request data for web service calls to `chucknorris.io`.
 enum ChuckNorrisIoRequest {
