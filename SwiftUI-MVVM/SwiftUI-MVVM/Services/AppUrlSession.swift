@@ -15,7 +15,7 @@ protocol AppUrlSessionHandling: Sendable {
     /// - Parameter url: The URL on which to make the request.
     /// - Returns: An object containing the decoded response data.
     /// - Throws: `AppUrlSession.RequestError`
-    nonisolated func get<Model: Decodable>(from url: URL) async throws -> Model
+    func get<Model: Decodable>(from url: URL) async throws -> Model
 }
 
 /// This is a wrapper around URLSession that provides a simplified API specific to this app.
@@ -32,8 +32,6 @@ final class AppUrlSession: AppUrlSessionHandling {
     func get<Model: Decodable>(from url: URL) async throws -> Model {
         let urlRequest = URLRequest(url: url)
         let response: (data: Data, urlResponse: URLResponse)
-
-        Logger.api.trace("isMainThread: \(Thread.isMainThread)")
 
         do {
             Logger.api.trace("GET \(url.absoluteString)")
@@ -96,7 +94,7 @@ extension AppUrlSession {
     /// Errors that may be thrown by `AppUrlSession`.
     enum RequestError: LocalizedError, Equatable {
         case unexpected(_ description: String)
-        case unexpectedError(_ error: Error)
+        case unexpectedError(_ error: any Error)
         case serverResponse(code: Int)
 
         var code: Int {

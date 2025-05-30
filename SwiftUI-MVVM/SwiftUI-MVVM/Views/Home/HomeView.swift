@@ -15,7 +15,7 @@ ViewModelType.Event == HomeViewModel.Event {
     @ObservedObject var viewModel: ViewModelType
 
     /// Convenience property to give direct access to `viewModel.state`.
-    private var state: HomeViewModel.State { viewModel.state }
+    private var state: ViewModelType.State { viewModel.state }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {

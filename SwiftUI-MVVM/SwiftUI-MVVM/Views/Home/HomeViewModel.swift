@@ -11,14 +11,14 @@ import OSLog
 final class HomeViewModel: ViewModel {
     @Published var state: State
 
-    private let session: AppUrlSessionHandling
-    
+    private let session: any AppUrlSessionHandling
+
     /// Create a new instance.
     /// - Parameters:
     ///   - state: The initial view state values.
     ///   - session: Injected URL session handler.
-    init(state: State = State(), session: AppUrlSessionHandling) {
-        self.state = state
+    init(session: any AppUrlSessionHandling) {
+        self.state = State()
         self.session = session
 
         fetchData()
@@ -50,8 +50,6 @@ private extension HomeViewModel {
         // run both random joke and categories requests in parallel.
 
         Task {
-            Logger.api.trace("isMainThread: \(Thread.isMainThread)")
-
             let result: GetRandomJokeResult
             do {
                 let joke: ChuckNorrisJoke = try await session.get(from: ChuckNorrisIoRequest.getRandomJoke().url)
@@ -66,8 +64,6 @@ private extension HomeViewModel {
         }
 
         Task {
-            Logger.api.trace("isMainThread: \(Thread.isMainThread)")
-
             let result: GetCategoriesResult
             do {
                 let categories: [String] = try await session.get(from: ChuckNorrisIoRequest.getCategories.url)
@@ -83,7 +79,7 @@ private extension HomeViewModel {
     }
 }
 
-// MARK: View State
+// MARK: - View State
 
 extension HomeViewModel {
     /// Encapsulation of values that drive the dynamic elements of the associated view.
@@ -95,6 +91,8 @@ extension HomeViewModel {
         private(set) var categories: [String]?
         private(set) var categoriesError: String?
         private(set) var refreshButtonDisabled: Bool = true
+
+        // MARK: Events that effect the state
 
         /// Items that designate how the view state should change, usually
         /// the result of an `Event`.
@@ -109,8 +107,6 @@ extension HomeViewModel {
             case getRandomJokeResult(GetRandomJokeResult)
         }
 
-        // MARK: Reducer
-        
         /// Handle changes from the current state to the next state.
         /// - Parameter effect: Directive of how the state should change.
         mutating func reduce(with effect: Effect) {
