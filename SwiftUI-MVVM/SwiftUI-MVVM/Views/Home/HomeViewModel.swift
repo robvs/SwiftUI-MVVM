@@ -12,14 +12,16 @@ final class HomeViewModel: ViewModel {
     @Published var state: State
 
     private let session: any AppUrlSessionHandling
+    private let router: NavigationRouter
 
     /// Create a new instance.
     /// - Parameters:
     ///   - state: The initial view state values.
     ///   - session: Injected URL session handler.
-    init(session: any AppUrlSessionHandling) {
+    init(session: any AppUrlSessionHandling, router: NavigationRouter) {
         self.state = State()
         self.session = session
+        self.router = router
 
         fetchData()
     }
@@ -35,6 +37,7 @@ final class HomeViewModel: ViewModel {
         switch event {
         case .categorySelected(let name):
             Logger.view.debug("Category selected: \(name)")
+            router.push(.category(name: name))
         case .refreshButtonPressed:
             fetchData()
         }
