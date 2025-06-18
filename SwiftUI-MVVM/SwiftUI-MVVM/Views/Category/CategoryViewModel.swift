@@ -43,7 +43,7 @@ final class CategoryViewModel: ViewModel {
 
 private extension CategoryViewModel {
     func fetchRandomJokes(for category: String) {
-        state.reduce(with: .loading)
+        state.handleLoading()
 
         Task {
             let result: GetRandomJokesResult
@@ -69,7 +69,7 @@ private extension CategoryViewModel {
             }
 
             Logger.view.trace("Fetch result: \(String(describing: result))")
-            state.reduce(with: .getRandomJokesResult(result))
+            state.handleRandomJokesResult(result)
         }
     }
 }
@@ -91,41 +91,29 @@ extension CategoryViewModel {
             self.categoryName = categoryName
         }
 
-        // MARK: Events that effect the state
+        // MARK: State Changes
+        // This differs from the `reduce(with:)` function in `HomeViewModel`
+        // only to illustrate a less formal approach to state updates.
 
-        /// Items that designate how the view state should change, usually
-        /// the result of an `Action`.
-        enum Effect: Equatable {
-            /// Indicates that jokes are being fetched.
-            case loading
-
-            /// Indicates that loading is complete and the view is ready.
-            case getRandomJokesResult(GetRandomJokesResult)
+        mutating func handleLoading() {
+            isLoading = true
+            jokes = []
+            errorMessage = nil
+            refreshButtonDisabled = true
         }
 
-        // MARK: Reducer
-
-        mutating func reduce(with effect: Effect) {
-            switch effect {
-            case .loading:
-                isLoading = true
-                jokes = []
+        mutating func handleRandomJokesResult(_ result: GetRandomJokesResult) {
+            switch result {
+            case .success(let newJokes):
+                isLoading = false
+                jokes = newJokes
                 errorMessage = nil
-                refreshButtonDisabled = true
+                refreshButtonDisabled = false
 
-            case .getRandomJokesResult(let result):
-                switch result {
-                case .success(let newJokes):
-                    isLoading = false
-                    jokes = newJokes
-                    errorMessage = nil
-                    refreshButtonDisabled = false
-
-                case .failure(let error):
-                    isLoading = false
-                    errorMessage = error.localizedDescription
-                    refreshButtonDisabled = false
-                }
+            case .failure(let error):
+                isLoading = false
+                errorMessage = error.localizedDescription
+                refreshButtonDisabled = false
             }
         }
     }

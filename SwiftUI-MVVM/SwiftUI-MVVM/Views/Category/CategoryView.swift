@@ -102,8 +102,16 @@ private final class FakeViewModel: ViewModel {
     }
 }
 
+#Preview("default") {
+    let viewModel = FakeViewModel(state: .init(categoryName: "Category 1"))
+    return CategoryView(viewModel: viewModel)
+        .preferredColorScheme(.light)
+}
+
 #Preview("loading") {
     let viewModel = FakeViewModel(state: .init(categoryName: "Category 1"))
+    viewModel.state.handleLoading()
+
     return CategoryView(viewModel: viewModel)
         .preferredColorScheme(.light)
 }
@@ -111,7 +119,7 @@ private final class FakeViewModel: ViewModel {
 #Preview("ready") {
     let viewModel = FakeViewModel(state: .init(categoryName: "Category 1"))
     let result = GetRandomJokesResult.success(["Joke 1", "Joke 2"])
-    viewModel.state.reduce(with: .getRandomJokesResult(result))
+    viewModel.state.handleRandomJokesResult(result)
 
     return CategoryView(viewModel: viewModel)
         .preferredColorScheme(.light)
@@ -120,7 +128,7 @@ private final class FakeViewModel: ViewModel {
 #Preview("error") {
     let viewModel = FakeViewModel(state: .init(categoryName: "Category 1"))
     let result = GetRandomJokesResult.failure(AppUrlSession.RequestError.serverResponse(code: 404))
-    viewModel.state.reduce(with: .getRandomJokesResult(result))
+    viewModel.state.handleRandomJokesResult(result)
     return CategoryView(viewModel: viewModel)
         .preferredColorScheme(.light)
 }
