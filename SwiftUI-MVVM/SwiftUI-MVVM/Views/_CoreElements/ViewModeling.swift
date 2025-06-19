@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-protocol ViewModel<State, Event>: ObservableObject {
+protocol ViewModeling<State, Event>: ObservableObject {
     associatedtype State
     associatedtype Event
 

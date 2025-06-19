@@ -8,7 +8,7 @@
 import Combine
 import OSLog
 
-final class HomeViewModel: ViewModel {
+final class HomeViewModel: ViewModeling {
     @Published var state: State
 
     private let session: any AppUrlSessionHandling
@@ -29,12 +29,15 @@ final class HomeViewModel: ViewModel {
     // MARK: Events
 
     enum Event {
+        case searchTextChanged(String)
         case categorySelected(name: String)
         case refreshButtonPressed
     }
 
     func send(event: Event) {
         switch event {
+        case .searchTextChanged(let searchText):
+            state.reduce(with: .filterCategories(searchText: searchText))
         case .categorySelected(let name):
             Logger.view.debug("Category selected: \(name)")
             router.push(.category(name: name))
@@ -91,9 +94,11 @@ extension HomeViewModel {
     struct State: Equatable {
         private(set) var randomJoke: String?
         private(set) var randomJokeError: String?
-        private(set) var categories: [String]?
+        private(set) var filteredCategories: [String]?
         private(set) var categoriesError: String?
         private(set) var refreshButtonDisabled: Bool = true
+
+        private var allCategories: [String] = []
 
         // MARK: Events that effect the state
 
@@ -108,6 +113,8 @@ extension HomeViewModel {
 
             /// Indicates that retrieval of the random joke is complete.
             case getRandomJokeResult(GetRandomJokeResult)
+
+            case filterCategories(searchText: String)
         }
 
         /// Handle changes from the current state to the next state.
@@ -134,11 +141,18 @@ extension HomeViewModel {
             case .getCategoriesResult(let result):
                 switch result {
                 case .success(let categories):
-                    self.categories = categories
+                    allCategories = categories
+                    filteredCategories = categories
                     categoriesError = nil
                 case .failure(let error):
-                    categories = []
+                    allCategories = []
+                    filteredCategories = []
                     categoriesError = error.localizedDescription
+                }
+
+            case .filterCategories(let searchText):
+                filteredCategories = allCategories.filter {
+                    $0.range(of: searchText, options: [.caseInsensitive, .regularExpression]) != nil
                 }
             }
         }

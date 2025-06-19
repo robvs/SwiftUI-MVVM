@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// Displays a set of random jokes for a specific category.
-struct CategoryView<ViewModelType: ViewModel>: View where
+struct CategoryView<ViewModelType: ViewModeling>: View where
 ViewModelType.State == CategoryViewModel.State,
 ViewModelType.Event == CategoryViewModel.Event {
     @ObservedObject var viewModel: ViewModelType
@@ -93,7 +93,7 @@ private extension CategoryView {
 
 // MARK: - Previews
 
-private final class FakeViewModel: ViewModel {
+private final class FakeViewModel: ViewModeling {
     @Published var state: CategoryViewModel.State
     func send(event: CategoryViewModel.Event) {}
 

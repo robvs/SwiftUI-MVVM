@@ -8,7 +8,7 @@
 import OSLog
 import SwiftUI
 
-final class CategoryViewModel: ViewModel {
+final class CategoryViewModel: ViewModeling {
     @Published var state: State
 
     static let jokeCount = 5

@@ -9,10 +9,12 @@ import OSLog
 import SwiftUI
 
 /// Displays a random joke and a list of available categories.
-struct HomeView<ViewModelType: ViewModel>: View where
+struct HomeView<ViewModelType: ViewModeling>: View where
 ViewModelType.State == HomeViewModel.State,
 ViewModelType.Event == HomeViewModel.Event {
     @ObservedObject var viewModel: ViewModelType
+
+    @State var searchText: String = ""
 
     /// Convenience property to give direct access to `viewModel.state`.
     private var state: ViewModelType.State { viewModel.state }
@@ -26,8 +28,10 @@ ViewModelType.Event == HomeViewModel.Event {
             categories()
         }
         .padding(.horizontal)
-        .navigationTitle("Home")
-        .toolbar(.hidden, for: .navigationBar)
+        .searchable(text: $searchText, prompt: "search categories")
+        .onChange(of: searchText) {
+            viewModel.send(event: .searchTextChanged(searchText))
+        }
     }
 }
 
@@ -103,7 +107,7 @@ private extension HomeView {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    if let categoryNames = state.categories {
+                    if let categoryNames = state.filteredCategories {
                         ForEach(categoryNames, id: \.self) { categoryName in
                             HomeCategoryListRow(categoryName: categoryName)
                                 .onTapGesture {
@@ -137,10 +141,9 @@ private extension HomeView {
     }
 }
 
-
 // MARK: - Previews
 
-private final class FakeViewModel: ViewModel {
+private final class FakeViewModel: ViewModeling {
     @Published var state = HomeViewModel.State()
     func send(event: HomeViewModel.Event) {}
 }
