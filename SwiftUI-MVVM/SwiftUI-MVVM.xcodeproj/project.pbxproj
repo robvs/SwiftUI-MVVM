@@ -40,11 +40,6 @@
 			path = "SwiftUI-MVVMTests";
 			sourceTree = "<group>";
 		};
-		7F9816812DE16DA200AD593F /* SwiftUI-MVVMUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "SwiftUI-MVVMUITests";
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,7 +72,6 @@
 			children = (
 				7F9816662DE16DA000AD593F /* SwiftUI-MVVM */,
 				7F9816772DE16DA200AD593F /* SwiftUI-MVVMTests */,
-				7F9816812DE16DA200AD593F /* SwiftUI-MVVMUITests */,
 				7F9816652DE16DA000AD593F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -152,9 +146,6 @@
 			);
 			dependencies = (
 				7F9816802DE16DA200AD593F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				7F9816812DE16DA200AD593F /* SwiftUI-MVVMUITests */,
 			);
 			name = "SwiftUI-MVVMUITests";
 			packageProductDependencies = (

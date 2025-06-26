@@ -8,6 +8,7 @@
 import Combine
 import OSLog
 
+@MainActor
 final class HomeViewModel: ViewModeling {
     @Published var state: State
 
