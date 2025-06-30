@@ -12,7 +12,7 @@ import SwiftUI
 struct HomeView<ViewModelType: ViewModeling>: View where
 ViewModelType.State == HomeViewModel.State,
 ViewModelType.Event == HomeViewModel.Event {
-    @ObservedObject var viewModel: ViewModelType
+    @StateObject var viewModel: ViewModelType
 
     @State var searchText: String = ""
 
@@ -23,9 +23,9 @@ ViewModelType.Event == HomeViewModel.Event {
         VStack(alignment: .leading, spacing: 16) {
             header()
 
-            randomJoke()
+            randomJokeSection()
 
-            categories()
+            categoriesSection()
         }
         .padding(.horizontal)
         .searchable(text: $searchText, prompt: "search categories")
@@ -65,7 +65,7 @@ private extension HomeView {
         }
     }
 
-    func randomJoke() -> some View {
+    func randomJokeSection() -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text("Random Joke")
@@ -81,51 +81,62 @@ private extension HomeView {
                     }
             }
 
-            error(message: state.randomJokeError)
-
-            Group {
-                if let randomJoke = state.randomJoke {
-                    Text(randomJoke)
-                        .appBodyText()
-                        .italic()
-                }
-                else {
-                    Text("This is dummy text to provide something to be redacted.")
-                        .redacted(reason: .placeholder)
-                }
+            if let randomJokeError = state.randomJokeError {
+                error(message: randomJokeError)
+            } else {
+                randomJoke()
             }
-            .padding(.horizontal)
         }
     }
 
-    func categories() -> some View {
+    func randomJoke() -> some View {
+        Group {
+            if let randomJoke = state.randomJokeText {
+                Text(randomJoke)
+                    .appBodyText()
+                    .italic()
+            } else {
+                Text("This is dummy text to provide something to be redacted.")
+                    .redacted(reason: .placeholder)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    func categoriesSection() -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Categories")
                 .appTitle2()
 
-            error(message: state.categoriesError)
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    if let categoryNames = state.filteredCategories {
-                        ForEach(categoryNames, id: \.self) { categoryName in
-                            HomeCategoryListRow(categoryName: categoryName)
-                                .onTapGesture {
-                                    viewModel.send(event: .categorySelected(name: categoryName))
-                                }
-                        }
-                    }
-                    else {
-                        Group {
-                            Text("Category 1")
-                            Text("Category 2")
-                            Text("Category 3")
-                        }
-                        .redacted(reason: .placeholder)
-                    }
-                }
-                .padding(.horizontal)
+            if let categoriesError = state.categoriesError {
+                error(message: categoriesError)
+                Spacer()
+            } else {
+                categories()
             }
+        }
+    }
+
+    func categories() -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                if let categoryNames = state.filteredCategories {
+                    ForEach(categoryNames, id: \.self) { categoryName in
+                        HomeCategoryListRow(categoryName: categoryName)
+                            .onTapGesture {
+                                viewModel.send(event: .categorySelected(name: categoryName))
+                            }
+                    }
+                } else {
+                    Group {
+                        Text("Category 1")
+                        Text("Category 2")
+                        Text("Category 3")
+                    }
+                    .redacted(reason: .placeholder)
+                }
+            }
+            .padding(.horizontal)
         }
     }
 
@@ -212,5 +223,11 @@ private final class FakeViewModel: ViewModeling {
         .preferredColorScheme(.dark)
 }
 
-fileprivate let randomJoke = "Chuck Norris can kill you with a headshot using a shotgun from across the map on call of duty."
+fileprivate let randomJoke = ChuckNorrisJoke(
+    iconUrl: nil,
+    id: "joke01",
+    url: "",
+    value: "Chuck Norris can kill you with a headshot using a shotgun from across the map on call of duty."
+)
+
 fileprivate let categoryNames = ["animal","career","celebrity","dev","explicit","fashion","food","history","money","movie","music","political","religion","science","sport","travel"]

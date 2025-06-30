@@ -118,7 +118,10 @@ private final class FakeViewModel: ViewModeling {
 
 #Preview("ready") {
     let viewModel = FakeViewModel(state: .init(categoryName: "Category 1"))
-    let result = GetRandomJokesResult.success(["Joke 1", "Joke 2"])
+    let result = GetRandomJokesResult.success([
+        PreviewHelper.createJoke("Joke 1"),
+        PreviewHelper.createJoke("Joke 2")]
+    )
     viewModel.state.handleRandomJokesResult(result)
 
     return CategoryView(viewModel: viewModel)
@@ -137,4 +140,14 @@ private final class FakeViewModel: ViewModeling {
     let viewModel = FakeViewModel(state: .init(categoryName: "Category 1"))
     return CategoryView(viewModel: viewModel)
         .preferredColorScheme(.dark)
+}
+
+fileprivate enum PreviewHelper {
+    static func createJoke(_ text: String) -> ChuckNorrisJoke {
+        ChuckNorrisJoke(
+            iconUrl: nil,
+            id: "",
+            url: "",
+            value: text
+        )    }
 }

@@ -60,7 +60,7 @@ private extension HomeViewModel {
             let result: GetRandomJokeResult
             do {
                 let joke: ChuckNorrisJoke = try await session.get(from: ChuckNorrisIoRequest.getRandomJoke().url)
-                result = .success(joke.value)
+                result = .success(joke)
             } catch let requestError as AppUrlSession.RequestError {
                 result = .failure(requestError)
             } catch {
@@ -93,13 +93,25 @@ extension HomeViewModel {
     ///
     /// The default values indicate the intended initial state.
     struct State: Equatable {
-        private(set) var randomJoke: String?
+        var randomJokeText: String? { randomJoke?.value }
         private(set) var randomJokeError: String?
         private(set) var filteredCategories: [String]?
         private(set) var categoriesError: String?
         private(set) var refreshButtonDisabled: Bool = true
 
+        private var randomJoke: ChuckNorrisJoke?
         private var allCategories: [String] = []
+
+        /// Init a new instance with the given joke.
+        init(randomJoke: ChuckNorrisJoke? = nil) {
+            // A reference to the data model object is held here to
+            // demonstrate how to pass it to another view's state without
+            // exposing it to the view. Ideally, views should not be
+            // dependent upon low-level data models - it is the job of
+            // the view model or view state to translate/transform the
+            // data model's values for presentation to the user.
+            self.randomJoke = randomJoke
+        }
 
         // MARK: Events that effect the state
 
@@ -135,7 +147,7 @@ extension HomeViewModel {
                     randomJoke = joke
                     randomJokeError = nil
                 case .failure(let error):
-                    randomJoke = ""
+                    randomJoke = nil
                     randomJokeError = error.localizedDescription
                 }
 

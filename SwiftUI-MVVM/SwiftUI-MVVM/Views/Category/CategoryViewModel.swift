@@ -49,13 +49,13 @@ private extension CategoryViewModel {
             let result: GetRandomJokesResult
             do {
                 // fetch a set of random category jokes
-                var jokes: [String] = []
+                var jokes: [ChuckNorrisJoke] = []
                 for _ in 0..<Self.jokeCount {
                     let jokeUrl = ChuckNorrisIoRequest.getRandomJoke(category: category).url
                     let joke: ChuckNorrisJoke = try await session.get(from: jokeUrl)
 
-                    if !jokes.contains(where: { $0 == joke.value }) {
-                        jokes.append(joke.value)
+                    if !jokes.contains(where: { $0.value == joke.value }) {
+                        jokes.append(joke)
                     }
                 }
 
@@ -106,7 +106,7 @@ extension CategoryViewModel {
             switch result {
             case .success(let newJokes):
                 isLoading = false
-                jokes = newJokes
+                jokes = newJokes.map { $0.value }
                 errorMessage = nil
                 refreshButtonDisabled = false
 

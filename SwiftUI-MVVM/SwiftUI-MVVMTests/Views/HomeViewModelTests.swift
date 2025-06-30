@@ -31,7 +31,7 @@ extension HomeViewModelTests {
         let sut = try await createSut(fakeUrlSession: fakeUrlSession)
 
         // Validate the initial view state
-        #expect(sut.state.randomJoke == nil)
+        #expect(sut.state.randomJokeText == nil)
         #expect(sut.state.filteredCategories == nil)
 
         // wait for the init() actions to complete (i.e. the two `get()`
@@ -40,11 +40,52 @@ extension HomeViewModelTests {
 
         // Validate the view state after a random joke is received
         fakeUrlSession.triggerJokeResponse(with: ChuckNorrisJoke(iconUrl: nil, id: "id01", url: jokeUrlString, value: randomJoke))
-        try await expect(joke: randomJoke, on: sut)
+        try await TestUtility.wait(
+            on: sut.$state,
+            keyPath: \.randomJokeText,
+            expectedValue: randomJoke
+        )
 
         // Validate the view state after categories are received
         fakeUrlSession.triggerCategoriesResponse(with: categories)
-        try await expect(categories: categories, on: sut)
+        try await TestUtility.wait(
+            on: sut.$state,
+            keyPath: \.filteredCategories,
+            expectedValue: categories
+        )
+    }
+
+    @Test
+    func test_initialState_loadFailure() async throws {
+        // Setup/Execute
+        let fakeUrlSession = FakeUrlSession()
+        let sut = try await createSut(fakeUrlSession: fakeUrlSession)
+
+        // Validate the initial view state
+        #expect(sut.state.randomJokeText == nil)
+        #expect(sut.state.filteredCategories == nil)
+
+        // wait for the init() actions to complete (i.e. the two `get()`
+        // requests on the urlSession)
+        try await waitFor(urlCount: 2, on: fakeUrlSession)
+
+        // Validate the view state after a random joke is received
+        fakeUrlSession.triggerJokeResponse(with: nil)
+        try await TestUtility.wait(
+            on: sut.$state,
+            keyPath: \.randomJokeError,
+            expectedValue: FakeUrlSession.requestError.localizedDescription
+        )
+        #expect(sut.state.randomJokeText == "")
+
+        // Validate the view state after categories are received
+        fakeUrlSession.triggerCategoriesResponse(with: nil)
+        try await TestUtility.wait(
+            on: sut.$state,
+            keyPath: \.categoriesError,
+            expectedValue: FakeUrlSession.requestError.localizedDescription
+        )
+        #expect(sut.state.filteredCategories == [])
     }
 }
 
@@ -78,28 +119,12 @@ private extension HomeViewModelTests {
     func expectReady(on viewModel: HomeViewModel) async throws {
         try await TestUtility.waitNotNil(
             on: viewModel.$state,
-            keyPath: \.randomJoke
+            keyPath: \.randomJokeText
         )
 
         try await TestUtility.waitNotNil(
             on: viewModel.$state,
             keyPath: \.filteredCategories
-        )
-    }
-
-    func expect(joke: String, on viewModel: HomeViewModel) async throws {
-        try await TestUtility.wait(
-            on: viewModel.$state,
-            keyPath: \.randomJoke,
-            expectedValue: joke
-        )
-    }
-
-    func expect(categories: [String], on viewModel: HomeViewModel) async throws {
-        try await TestUtility.wait(
-            on: viewModel.$state,
-            keyPath: \.filteredCategories,
-            expectedValue: categories
         )
     }
 
