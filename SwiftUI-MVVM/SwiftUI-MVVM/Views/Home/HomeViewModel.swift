@@ -13,18 +13,19 @@ final class HomeViewModel: ViewModeling {
     @Published var state: State
 
     private let session: any AppUrlSessionHandling
-    private let router: NavigationRouter
+    private let router: any NavigationRouting
 
     /// Create a new instance.
     /// - Parameters:
     ///   - state: The initial view state values.
     ///   - session: Injected URL session handler.
-    init(session: any AppUrlSessionHandling, router: NavigationRouter) {
+    init(session: any AppUrlSessionHandling, router: any NavigationRouting) {
         self.state = State()
         self.session = session
         self.router = router
 
-        fetchData()
+        fetchRandomJoke()
+        fetchCategories()
     }
 
     // MARK: Events
@@ -43,7 +44,7 @@ final class HomeViewModel: ViewModeling {
             Logger.view.debug("Category selected: \(name)")
             router.push(.category(name: name))
         case .refreshButtonPressed:
-            fetchData()
+            fetchRandomJoke()
         }
     }
 }
@@ -51,7 +52,7 @@ final class HomeViewModel: ViewModeling {
 // MARK: - Private Helpers
 
 private extension HomeViewModel {
-    func fetchData() {
+    func fetchRandomJoke() {
         state.reduce(with: .loadingRandomJoke)
 
         // run both random joke and categories requests in parallel.
@@ -69,7 +70,9 @@ private extension HomeViewModel {
 
             state.reduce(with: .getRandomJokeResult(result))
         }
+    }
 
+    func fetchCategories() {
         Task {
             let result: GetCategoriesResult
             do {

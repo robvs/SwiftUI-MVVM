@@ -26,7 +26,6 @@
 /* Begin PBXFileReference section */
 		7F9816642DE16DA000AD593F /* SwiftUI-MVVM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SwiftUI-MVVM.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F9816742DE16DA200AD593F /* SwiftUI-MVVMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SwiftUI-MVVMTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7F98167E2DE16DA200AD593F /* SwiftUI-MVVMUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SwiftUI-MVVMUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -81,7 +80,6 @@
 			children = (
 				7F9816642DE16DA000AD593F /* SwiftUI-MVVM.app */,
 				7F9816742DE16DA200AD593F /* SwiftUI-MVVMTests.xctest */,
-				7F98167E2DE16DA200AD593F /* SwiftUI-MVVMUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -134,26 +132,6 @@
 			productReference = 7F9816742DE16DA200AD593F /* SwiftUI-MVVMTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		7F98167D2DE16DA200AD593F /* SwiftUI-MVVMUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 7F98168E2DE16DA200AD593F /* Build configuration list for PBXNativeTarget "SwiftUI-MVVMUITests" */;
-			buildPhases = (
-				7F98167A2DE16DA200AD593F /* Sources */,
-				7F98167B2DE16DA200AD593F /* Frameworks */,
-				7F98167C2DE16DA200AD593F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				7F9816802DE16DA200AD593F /* PBXTargetDependency */,
-			);
-			name = "SwiftUI-MVVMUITests";
-			packageProductDependencies = (
-			);
-			productName = "SwiftUI-MVVMUITests";
-			productReference = 7F98167E2DE16DA200AD593F /* SwiftUI-MVVMUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -193,7 +171,6 @@
 			targets = (
 				7F9816632DE16DA000AD593F /* SwiftUI-MVVM */,
 				7F9816732DE16DA200AD593F /* SwiftUI-MVVMTests */,
-				7F98167D2DE16DA200AD593F /* SwiftUI-MVVMUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -485,40 +462,6 @@
 			};
 			name = Release;
 		};
-		7F98168F2DE16DA200AD593F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9JG95NNF4W;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.randomvisual.SwiftUI-MVVMUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "SwiftUI-MVVM";
-			};
-			name = Debug;
-		};
-		7F9816902DE16DA200AD593F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9JG95NNF4W;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.randomvisual.SwiftUI-MVVMUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "SwiftUI-MVVM";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -545,15 +488,6 @@
 			buildConfigurations = (
 				7F98168C2DE16DA200AD593F /* Debug */,
 				7F98168D2DE16DA200AD593F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		7F98168E2DE16DA200AD593F /* Build configuration list for PBXNativeTarget "SwiftUI-MVVMUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				7F98168F2DE16DA200AD593F /* Debug */,
-				7F9816902DE16DA200AD593F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

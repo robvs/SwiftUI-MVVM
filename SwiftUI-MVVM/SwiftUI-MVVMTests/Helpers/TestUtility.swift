@@ -11,6 +11,8 @@ import OSLog
 @testable import SwiftUI_MVVM
 
 enum TestUtility {
+    static var sleepMilliseconds: Duration { .milliseconds(5) }
+
     /// Wait up to `timeout` seconds for the given predicate to succeed.
     ///
     /// NOTE: `Predicate<>` only supports very simple closures and definitely does not
@@ -31,6 +33,7 @@ enum TestUtility {
     ///   - evaluationObject: The object on which the predicate is evaluated.
     ///   - timeout: Maximum amount of time to wait.
     /// - Throws: `TestingError.timeout` if the timeout is exceeded.
+    nonisolated // ensure this is not run on the main actor
     static func wait<EvalType>(
         for predicate: Predicate<EvalType>,
         evaluateWith evaluationObject: EvalType,
@@ -43,7 +46,7 @@ enum TestUtility {
         // using an `expectation` can block testing tasks that run on the main thread.
         while startTime.timeIntervalSinceNow > -timeout, !didSucceed {
             // wait for a few milliseconds to avoid a completely busy wait.
-            try? await Task.sleep(for: .milliseconds(5))
+            try? await Task.sleep(for: sleepMilliseconds)
             didSucceed = try predicate.evaluate(evaluationObject)
         }
 
@@ -68,17 +71,18 @@ enum TestUtility {
     /// )
     /// ```
     /// - Parameters:
+    ///   - value: The value that is expected to match a published result.
     ///   - publisher: The publisher that is expected to produce a result that, when
     ///   `keyPath` is applied, matches `matchingValue`. This is typically a view
     ///   model's state. i.e. `viewModel.$state`.
     ///   - keyPath: The key path that is applied to a result from `publisher`.
-    ///   - expectedValue: The value that is expected to match a published result.
     ///   - timeout: The amount of time to wait for the expected value.
     /// - Throws: `TestingError.timeout` if the timeout is exceeded.
-    static func wait<PublisherType, ValueType: Equatable>(
+    nonisolated // ensure this is not run on the main actor
+    static func expect<PublisherType, ValueType: Equatable>(
+        value expectedValue: ValueType?,
         on publisher: Published<PublisherType>.Publisher,
         keyPath: KeyPath<PublisherType, ValueType>,
-        expectedValue: ValueType?,
         timeout: TimeInterval = 1.0
     ) async throws {
         let startTime = Date()
@@ -98,12 +102,12 @@ enum TestUtility {
         // using an `expectation` can block testing tasks that run on the main thread.
         while startTime.timeIntervalSinceNow > -timeout, !didSucceed {
             // wait for a few milliseconds to avoid a completely busy wait.
-            try? await Task.sleep(for: .milliseconds(5))
+            try? await Task.sleep(for: sleepMilliseconds)
         }
 
         cancellable.cancel()
         if !didSucceed {
-            let errorDescription = "Timeout (\(timeout)s) while waiting for predicate."
+            let errorDescription = "Timeout (\(timeout)s) while waiting for keypath \(keyPath) to equal '\(String(describing: expectedValue))'"
             throw TestingError.timeout(message: errorDescription)
         }
     }
@@ -128,6 +132,7 @@ enum TestUtility {
     ///   - keyPath: The key paths that is applied to a result from `publisher`.
     ///   - timeout: The amount of time to wait for the expected value.
     /// - Throws: `TestingError.timeout` if the timeout is exceeded.
+    nonisolated // ensure this is not run on the main actor
     static func waitNotNil<PublisherType, ValueType>(
         on publisher: Published<PublisherType>.Publisher,
         keyPath: KeyPath<PublisherType, ValueType?>,
@@ -150,12 +155,12 @@ enum TestUtility {
         // using an `expectation` can block testing tasks that run on the main thread.
         while startTime.timeIntervalSinceNow > -timeout, !didSucceed {
             // wait for a few milliseconds to avoid a completely busy wait.
-            try? await Task.sleep(for: .milliseconds(5))
+            try? await Task.sleep(for: sleepMilliseconds)
         }
 
         cancellable.cancel()
         if !didSucceed {
-            let errorDescription = "Timeout (\(timeout)s) while waiting for predicate."
+            let errorDescription = "Timeout (\(timeout)s) while waiting for keypath \(keyPath) != nil."
             throw TestingError.timeout(message: errorDescription)
         }
     }
@@ -170,5 +175,9 @@ enum TestingError: Error {
         case .timeout(message: let message):
             "timeout: \(message)"
         }
+    }
+
+    var description: String {
+        localizedDescription
     }
 }
