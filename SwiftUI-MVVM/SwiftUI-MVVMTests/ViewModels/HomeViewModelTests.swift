@@ -35,23 +35,29 @@ extension HomeViewModelTests {
 
         // wait for the init() actions to complete (i.e. the two `get()`
         // requests on the urlSession)
-        try await waitFor(urlCount: 2, on: fakeUrlSession)
+        await #expect(throws: Never.self) {
+            try await waitFor(urlCount: 2, on: fakeUrlSession)
+        }
 
         // Validate the view state after a random joke is received
         fakeUrlSession.triggerJokeResponse(with: ChuckNorrisJoke(iconUrl: nil, id: "id01", url: jokeUrlString, value: randomJoke))
-        try await TestUtility.expect(
-            value: randomJoke,
-            on: sut.$state,
-            keyPath: \.randomJokeText
-        )
+        await #expect(throws: Never.self) {
+            try await TestUtility.expect(
+                value: randomJoke,
+                on: sut.$state,
+                keyPath: \.randomJokeText
+            )
+        }
 
         // Validate the view state after categories are received
         fakeUrlSession.triggerCategoriesResponse(with: categories)
-        try await TestUtility.expect(
-            value: categories,
-            on: sut.$state,
-            keyPath: \.filteredCategories
-        )
+        await #expect(throws: Never.self) {
+            try await TestUtility.expect(
+                value: categories,
+                on: sut.$state,
+                keyPath: \.filteredCategories
+            )
+        }
     }
 
     @Test
@@ -66,38 +72,30 @@ extension HomeViewModelTests {
 
         // wait for the init() actions to complete (i.e. the two `get()`
         // requests on the urlSession)
-        try await waitFor(urlCount: 2, on: fakeUrlSession)
+        await #expect(throws: Never.self) {
+            try await waitFor(urlCount: 2, on: fakeUrlSession)
+        }
 
         // Validate the view state after a random joke is received
         fakeUrlSession.triggerJokeResponse(with: nil)
-        do {
+        await #expect(throws: Never.self) {
             try await TestUtility.expect(
                 value: FakeUrlSession.requestError.localizedDescription,
                 on: sut.$state,
                 keyPath: \.randomJokeError
             )
-        } catch {
-            // in theory, this do/catch should not be necessary, but the
-            // message displayed by the debugger here is not the thrown
-            // error's description.
-            Issue.record(error)
         }
 
         #expect(sut.state.randomJokeText == nil)
 
         // Validate the view state after categories are received
         fakeUrlSession.triggerCategoriesResponse(with: nil)
-        do {
+        await #expect(throws: Never.self) {
             try await TestUtility.expect(
                 value: FakeUrlSession.requestError.localizedDescription,
                 on: sut.$state,
                 keyPath: \.categoriesError
             )
-        } catch {
-            // in theory, this do/catch should not be necessary, but the
-            // message displayed by the debugger here is not the thrown
-            // error's description.
-            Issue.record(error)
         }
 
         #expect(sut.state.filteredCategories == [])
@@ -186,18 +184,22 @@ extension HomeViewModelTests {
         sut.send(event: .refreshButtonPressed)
 
         // wait for the refresh `get()` request to be made on the urlSession
-        try await waitFor(urlCount: sessionUrlCount + 1, on: fakeUrlSession)
+        await #expect(throws: Never.self) {
+            try await waitFor(urlCount: sessionUrlCount + 1, on: fakeUrlSession)
+        }
 
         // Validate
         #expect(sut.state.refreshButtonDisabled == true)
         #expect(sut.state.randomJokeText == nil)
 
         fakeUrlSession.triggerJokeResponse(with: ChuckNorrisJoke(iconUrl: nil, id: "id01", url: jokeUrlString, value: randomJoke))
-        try await TestUtility.expect(
-            value: randomJoke,
-            on: sut.$state,
-            keyPath: \.randomJokeText
-        )
+        await #expect(throws: Never.self) {
+            try await TestUtility.expect(
+                value: randomJoke,
+                on: sut.$state,
+                keyPath: \.randomJokeText
+            )
+        }
     }
 }
 

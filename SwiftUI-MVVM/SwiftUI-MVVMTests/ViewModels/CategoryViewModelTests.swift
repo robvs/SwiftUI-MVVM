@@ -51,20 +51,17 @@ extension CategoryViewModelTests {
         #expect(sut.state.isLoading == true)
 
         // trigger responses for all CategoryViewModel.jokeCount (5) requests.
-        try await trigger(jokeResponses: responseJokes, on: fakeUrlSession)
+        await #expect(throws: Never.self) {
+            try await trigger(jokeResponses: responseJokes, on: fakeUrlSession)
+        }
 
         // Validate the view state after the jokes are received.
-        do {
+        await #expect(throws: Never.self) {
             try await TestUtility.expect(
                 value: expectedJokes,
                 on: sut.$state,
                 keyPath: \.jokes
             )
-        } catch {
-            // in theory, this do/catch should not be necessary, but the
-            // message displayed by the debugger here is not the thrown
-            // error's description.
-            Issue.record(error)
         }
 
         #expect(sut.state.isLoading == false)
@@ -83,23 +80,20 @@ extension CategoryViewModelTests {
 
         // wait for at least 1 random joke request to be initiated
         // on the urlSession.
-        try await waitFor(urlCount: 1, on: fakeUrlSession)
+        await #expect(throws: Never.self) {
+            try await waitFor(urlCount: 1, on: fakeUrlSession)
+        }
 
         // Execute - cause the first joke request to fail
         fakeUrlSession.triggerJokeResponse(with: nil)
 
         // Validate that the expected changes were applied to the view state.
-        do {
+        await #expect(throws: Never.self) {
             try await TestUtility.expect(
                 value: FakeUrlSession.requestError.localizedDescription,
                 on: sut.$state,
                 keyPath: \.errorMessage
             )
-        } catch {
-            // in theory, this do/catch should not be necessary, but the
-            // message displayed by the debugger here is not the thrown
-            // error's description.
-            Issue.record(error)
         }
 
         #expect(sut.state.isLoading == false)
@@ -123,34 +117,33 @@ extension CategoryViewModelTests {
         )
 
         // sanity check
-        try await TestUtility.expect(
-            value: initialJokes,
-            on: sut.$state,
-            keyPath: \.jokes
-        )
+        await #expect(throws: Never.self) {
+            try await TestUtility.expect(
+                value: initialJokes,
+                on: sut.$state,
+                keyPath: \.jokes
+            )
+        }
 
         // Execute
         sut.send(event: .refreshButtonPressed)
 
         // trigger responses for all CategoryViewModel.jokeCount (5) requests.
-        try await trigger(
-            jokeResponses: refreshJokes,
-            on: fakeUrlSession,
-            previousRequestCount: initialJokes.count
-        )
+        await #expect(throws: Never.self) {
+            try await trigger(
+                jokeResponses: refreshJokes,
+                on: fakeUrlSession,
+                previousRequestCount: initialJokes.count
+            )
+        }
 
         // Validate the view state after the jokes are received.
-        do {
+        await #expect(throws: Never.self) {
             try await TestUtility.expect(
                 value: refreshJokes,
                 on: sut.$state,
                 keyPath: \.jokes
             )
-        } catch {
-            // in theory, this do/catch should not be necessary, but the
-            // message displayed by the debugger here is not the thrown
-            // error's description.
-            Issue.record(error)
         }
 
         #expect(sut.state.isLoading == false)

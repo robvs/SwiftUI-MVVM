@@ -107,7 +107,7 @@ enum TestUtility {
 
         cancellable.cancel()
         if !didSucceed {
-            let errorDescription = "Timeout (\(timeout)s) while waiting for keypath \(keyPath) to equal '\(String(describing: expectedValue))'"
+            let errorDescription = "Timeout (\(timeout)s) while waiting for keypath \(keyPath) to equal `\(description(for: expectedValue))`"
             throw TestingError.timeout(message: errorDescription)
         }
     }
@@ -163,6 +163,18 @@ enum TestUtility {
             let errorDescription = "Timeout (\(timeout)s) while waiting for keypath \(keyPath) != nil."
             throw TestingError.timeout(message: errorDescription)
         }
+    }
+}
+
+// MARK: - Private Helpers
+
+private extension TestUtility {
+    static func description<T>(for value: T?) -> String {
+        guard let value, let stringDescribable = value as? CustomStringConvertible else {
+            return String(describing: value)
+        }
+
+        return stringDescribable.description
     }
 }
 
