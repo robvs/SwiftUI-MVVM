@@ -14,13 +14,6 @@
 			remoteGlobalIDString = 7F9816632DE16DA000AD593F;
 			remoteInfo = "SwiftUI-MVVM";
 		};
-		7F98167F2DE16DA200AD593F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7F98165C2DE16DA000AD593F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7F9816632DE16DA000AD593F;
-			remoteInfo = "SwiftUI-MVVM";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -50,13 +43,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7F9816712DE16DA200AD593F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7F98167B2DE16DA200AD593F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -149,10 +135,6 @@
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 7F9816632DE16DA000AD593F;
 					};
-					7F98167D2DE16DA200AD593F = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 7F9816632DE16DA000AD593F;
-					};
 				};
 			};
 			buildConfigurationList = 7F98165F2DE16DA000AD593F /* Build configuration list for PBXProject "SwiftUI-MVVM" */;
@@ -190,13 +172,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7F98167C2DE16DA200AD593F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -214,13 +189,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7F98167A2DE16DA200AD593F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -228,11 +196,6 @@
 			isa = PBXTargetDependency;
 			target = 7F9816632DE16DA000AD593F /* SwiftUI-MVVM */;
 			targetProxy = 7F9816752DE16DA200AD593F /* PBXContainerItemProxy */;
-		};
-		7F9816802DE16DA200AD593F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7F9816632DE16DA000AD593F /* SwiftUI-MVVM */;
-			targetProxy = 7F98167F2DE16DA200AD593F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

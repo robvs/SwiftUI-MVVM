@@ -11,7 +11,7 @@ import SwiftUI
 final class CategoryViewModel: ViewModeling {
     @Published var state: State
 
-    static let jokeCount = 5
+    nonisolated static let jokeCount = 5
     private let session: any AppUrlSessionHandling
 
     /// Create a new instance.
