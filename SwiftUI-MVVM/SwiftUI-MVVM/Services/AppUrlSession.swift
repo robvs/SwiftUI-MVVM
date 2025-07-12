@@ -15,6 +15,7 @@ protocol AppUrlSessionHandling: Sendable {
     /// - Parameter url: The URL on which to make the request.
     /// - Returns: An object containing the decoded response data.
     /// - Throws: `AppUrlSession.RequestError`
+    nonisolated
     func get<Model: Decodable>(from url: URL) async throws -> Model
 }
 

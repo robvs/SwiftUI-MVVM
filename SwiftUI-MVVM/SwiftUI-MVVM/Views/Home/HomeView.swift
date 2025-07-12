@@ -10,7 +10,7 @@ import SwiftUI
 
 /// Displays a random joke and a list of available categories.
 struct HomeView<ViewModelType: ViewModeling>: View where
-ViewModelType.State == HomeViewModel.State,
+ViewModelType.State == HomeViewState,
 ViewModelType.Event == HomeViewModel.Event {
     @StateObject var viewModel: ViewModelType
 
