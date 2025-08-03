@@ -46,8 +46,8 @@ View Models conform to `ViewModeling` and define `State` and `Event` types. For 
 final class SomeViewModel: ViewModeling {
     @Published var state: SomeViewState
 
-	// Define dependencies and other private properties here...
-	...
+    // Define dependencies and other private properties here...
+    ...
 
     // MARK: Events
 
@@ -58,25 +58,25 @@ final class SomeViewModel: ViewModeling {
     func send(event: Event) {
         switch event {
         case .event1:
-			let newValue = // process the event
-			state.handleEvent1Result(newValue)
+            let newValue = // process the event
+            state.handleEvent1Result(newValue)
         }
     }
 }
 
 // MARK: - View State
 
- /// Encapsulation of values that drive the dynamic elements of the associated view.
+/// Encapsulation of values that drive the dynamic elements of the associated view.
 /// The default values indicate the intended initial state.
 struct SomeViewState {
     private(set) var value1: String?
     private(set) var value2: Int = 0
 
-	// MARK: Functions that manage state updates
+    // MARK: Functions that manage state updates
 	
     mutating func handleEvent1Result(_ newValue: String?) {
     	value1 = newValue
-		value2 = 42
+        value2 = 42
     }
 }
 ```
@@ -90,8 +90,8 @@ The approach described in this document limits View dependencies to only the Vie
 struct SomeView<ViewModelType: ViewModeling>: View where
 ViewModelType.State == SomeViewModel.State,
 ViewModelType.Event == SomeViewModel.Event {
-	@StateObject var viewModel: ViewModelType
-	...
+    @StateObject var viewModel: ViewModelType
+    ...
 }
 ```
 
